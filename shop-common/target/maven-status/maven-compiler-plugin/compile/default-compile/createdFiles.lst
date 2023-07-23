@@ -1,0 +1,4 @@
+com\ruida\domain\Order.class
+com\ruida\domain\CommonApplication.class
+com\ruida\domain\Product.class
+com\ruida\domain\User.class
