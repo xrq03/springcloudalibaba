@@ -4,7 +4,7 @@ import com.alibaba.csp.sentinel.adapter.servlet.callback.RequestOriginParser;
 import org.springframework.stereotype.Component;
 
 import javax.servlet.http.HttpServletRequest;
-@Component
+//@Component
 public class RequestOriginParrDefinition implements RequestOriginParser {
     //RequestOriginParrDefinition 类使用 @Component 注解将其标记为一个 Spring 组件，用于自动进行扫描和注册。
     //parseOrigin 方法用于解析请求的来源。在该方法中，通过 httpServletRequest.getParameter("serviceName")

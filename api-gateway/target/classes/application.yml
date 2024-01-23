@@ -3,6 +3,13 @@ server:
 spring:
   application:
     name: api-gateway
+
+  sleuth:
+    sampler:
+      probability: 1 #采样的百分比
+  zipkin:
+    base-url: http://localhost:9411
+    discovery-client-enable: false
   cloud:
     nacos:
       discovery:
@@ -26,3 +33,21 @@ spring:
             - StripPrefix=1 #表示过滤一层
             - SetStatus=20000
             - Log=true,false
+
+        - id: order_route  #当前路由的标识，要求为1哦
+          uri: lb://service-order #请求要转发的地址
+          order: 2  #优先级 数字越小级别越高
+          predicates: #断言assert（路由转发需要满足的条件）
+            - Path=/product-serv1/**
+              #- Age=18,30
+              # - Before=2023-11-28T00:00:00.000+08:00
+              #- RemoteAddr=192.168.0.1
+            # - Cookie=mycookie,mycookievalue
+            # - Method=GET
+          filters: #过滤器，请求传递的过程，通过过滤
+            - StripPrefix=1 #表示过滤一层
+            - SetStatus=20000
+            - Log=true,false
+logging:
+  level:
+    org.springframework.cloud.sleuth: debug

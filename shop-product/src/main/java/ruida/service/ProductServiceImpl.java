@@ -13,4 +13,15 @@ private ProductDao productDao;
     public Product findByPid(Integer pid) {
         return productDao.findById(pid).get();
     }
+
+    @Override
+    public Product reduceById(Integer pid,Integer number) {
+        Product product =productDao.findById(pid).get();
+        if(product.getStock()<number){
+            throw new RuntimeException("库存不足");
+        }
+       // int i=100/0;
+        product.setStock(product.getStock()-number);
+        return productDao.save(product);
+    }
 }

@@ -69,29 +69,6 @@ public class GatewayConfiguration {
     public SentinelGatewayBlockExceptionHandler sentinelGatewayBlockExceptionHandler() {
         return new SentinelGatewayBlockExceptionHandler(viewResolvers, serverCodecConfigurer);
     }
-    @PostConstruct
-    private void initCustomizedApis() {
-        Set<ApiDefinition> definitions = new HashSet<>();
-
-        Set predicateItemSet1 = new HashSet();
-        predicateItemSet1.add(new ApiPathPredicateItem()
-                .setPattern("/product-serv/product/api001/**")
-                .setMatchStrategy(SentinelGatewayConstants.URL_MATCH_STRATEGY_PREFIX)); // 前缀匹配
-        ApiDefinition api1 = new ApiDefinition("product_api_001")
-                .setPredicateItems(predicateItemSet1);
-
-        Set predicateItemSet2 = new HashSet();
-        predicateItemSet2.add(new ApiPathPredicateItem()
-                .setPattern("/product-serv/product/api002/demo1")
-                .setMatchStrategy(SentinelGatewayConstants.URL_MATCH_STRATEGY_EXACT));  // 精确匹配
-        ApiDefinition api2 = new ApiDefinition("product_api_002")
-                .setPredicateItems(predicateItemSet2);
-
-        definitions.add(api1);
-        definitions.add(api2);
-
-        GatewayApiDefinitionManager.loadApiDefinitions(definitions);
-    }
 
     //　自定义限流异常页面
     @PostConstruct
@@ -108,4 +85,5 @@ public class GatewayConfiguration {
         };
         GatewayCallbackManager.setBlockHandler(blockRequestHandler);
     }
+
 }

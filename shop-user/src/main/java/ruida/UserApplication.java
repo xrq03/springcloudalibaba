@@ -1,9 +1,9 @@
 package ruida;
 
+import org.apache.rocketmq.spring.annotation.RocketMQMessageListener;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
-
 @SpringBootApplication
 @EnableDiscoveryClient
 public class UserApplication {

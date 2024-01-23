@@ -21,24 +21,27 @@ public class ProductController{
         Product product=productService.findByPid(pid);
         return product;
     }
-    @RequestMapping("/product/api001/demo1")
-    public String demo1() {
-        return "demo";
+    @GetMapping("/prod/{pid}/{number}")
+    public Product reduceById(@PathVariable("pid") Integer pid,@PathVariable("number") Integer number){
+       return productService.reduceById(pid,number);
     }
-
-    @RequestMapping("/product/api001/demo2")
-    public String demo2() {
-        return "demo2";
-    }
-
-    @RequestMapping("/product/api002/demo1")
-    public String demo3() {
-        return "demo3";
-    }
-
-    @RequestMapping("/product/api002/demo2")
-    public String demo4() {
-        return "demo4";
-    }
-
+//    @RequestMapping("/product/api001/demo1")
+//    public String demo1() {
+//        return "demo";
+//    }
+//
+//    @RequestMapping("/product/api001/demo2")
+//    public String demo2() {
+//        return "demo2";
+//    }
+//
+//    @RequestMapping("/product/api002/demo1")
+//    public String demo3() {
+//        return "demo3";
+//    }
+//
+//    @RequestMapping("/product/api002/demo2")
+//    public String demo4() {
+//        return "demo4";
+//    }
 }

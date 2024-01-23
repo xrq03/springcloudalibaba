@@ -7,29 +7,19 @@ import com.ruida.domain.User;
 import com.ruida.service.OrderService;
 import com.ruida.service.ProductService;
 import com.ruida.service.UserService;
+import com.ruida.service.impl.OrderServiceImpl4;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.rocketmq.spring.core.RocketMQTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.domain.EntityScan;
-import org.springframework.cloud.client.ServiceInstance;
 import org.springframework.cloud.client.discovery.DiscoveryClient;
-import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
-
-import java.util.List;
-import java.util.Random;
-import java.util.stream.IntStream;
-
-//Nginx
-//@Slf4j注解来自动创建日志对象。
 @Slf4j
 //@RestController注解将该类标记为一个控制器，并且自动将返回的对象序列化为JSON响应。
 //@RestController
-@EntityScan("com.ruida.domain")
-public class OrderController {
+public class OrderController4 {
     @Autowired
     private OrderService orderService;
     @Autowired
@@ -40,10 +30,13 @@ public class OrderController {
     private ProductService productService;
     @Autowired
     private UserService userService;
+//    @Autowired
+//    private RocketMQTemplate rocketMQTemplate;
     @Autowired
-     RocketMQTemplate rocketMQTemplate;
+    private OrderServiceImpl4 orderServiceImpl4;
+
     @GetMapping("/order/prod/{pid}/{uid}")
-    public Order order(@PathVariable("pid") Integer pid,@PathVariable("uid") Integer uid) throws Exception {//@PathVariable("uid") Integer uid
+    public Order order(@PathVariable("pid") Integer pid, @PathVariable("uid") Integer uid) throws Exception {//@PathVariable("uid") Integer uid
         //List<ServiceInstance> instances = discoveryclient.getInstances("service-product");
         //List<ServiceInstance> instances1 = discoveryclient.getInstances("service-user");
         //Random random=new Random();
@@ -51,13 +44,13 @@ public class OrderController {
         //int i1=random.nextInt(instances1.size());
         //ServiceInstance serviceInstance=instances.get(i);
         //ServiceInstance serviceInstance1=instances1.get(i1);
-       // log.info(">>客户下单，这时候要调用商品微服务查询商品信息");
-        String url=//"http://"+serviceInstance.getHost()+":"+serviceInstance.getPort()+"/prod/"+pid;
+        // log.info(">>客户下单，这时候要调用商品微服务查询商品信息");
+        String url =//"http://"+serviceInstance.getHost()+":"+serviceInstance.getPort()+"/prod/"+pid;
                 "service-product";
         //log.info(">>从nacos中获取到的微服务地址为:" + url);
         //Product product=restTemplate.getForObject("http://"+url+"/prod/"+pid,Product.class);
         //log.info(">>商品信息,查询结果:" + JSON.toJSONString(product));
-        String url1=//"http://"+serviceInstance1.getHost()+":"+serviceInstance1.getPort()+"/user/"+uid;
+        String url1 =//"http://"+serviceInstance1.getHost()+":"+serviceInstance1.getPort()+"/user/"+uid;
                 "service-user";
         //通过discoveryclient.getInstances("service-product")方法获取名为service-product的服务实例列表。
         //通过discoveryclient.getInstances("service-user")方法获取名为service-user的服务实例列表。
@@ -71,9 +64,9 @@ public class OrderController {
         //通过日志打印出商品信息的查询结果。
         //通过类似的方式获取用户微服务的URL，并发送HTTP GET请求来调用用户微服务。
         log.info(">>从nacos中获取到的微服务地址为:" + url1);
-        Product product= productService.findById(pid);
-        if (product.getPid()==-1){
-            Order order=new Order();
+        Product product = productService.findById(pid);
+        if (product.getPid() == -1) {
+            Order order = new Order();
             order.setOid(-999l);
             order.setPname("下单失败");
             return order;
@@ -91,24 +84,21 @@ public class OrderController {
         //接下来，创建一个Order对象，并设置相应的属性值。
         //
         //最后调用orderService.save(order)保存订单，并返回该订单对象。
-        User user= userService.findById(uid);
+        User user = userService.findById(uid);
         //User user=restTemplate.getForObject("http://"+url1+"/user/"+uid,User.class);
         Thread.sleep(5000);
-        Order order=new Order();
+        Order order = new Order();
         order.setUid(user.getUid());
         order.setUsername(user.getUsername());//
         order.setPid(product.getPid());
         order.setPname(product.getPname());
         order.setPprice(product.getPprice());
         order.setNumber(10);
+        orderServiceImpl4.createOrderBefore(order);
         orderService.save(order);
-        rocketMQTemplate.convertAndSend("order-topic",order);
-       //Thread.sleep(5000);
+      //  rocketMQTemplate.convertAndSend("order-topic", order);
+        //Thread.sleep(5000);
+        log.info("创建订单信息，订单信息为{}", JSON.toJSONString(order));
         return order;
     }
-    @GetMapping("/order/message")
-    public String message(){
-        return "高并发测试";
-    }
-
 }
